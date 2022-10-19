@@ -13,3 +13,6 @@ Para executar o sistema basta executar o script Python a seguir:
 
 ### Bibliotecas Utilizadas
 - [requirements.txt](src/requirements.txt): `pip install -r requirements.txt`
+
+Vídeo demonstrativo das funções do projeto:
+Link: https://youtu.be/ac8SAk9KUsk
