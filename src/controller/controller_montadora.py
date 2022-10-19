@@ -74,17 +74,24 @@ class Controller_Montadora:
         if not self.verifica_existencia_montadora(oracle, cnpj):            
             # Recupera os dados do novo montadora criado transformando em um DataFrame
             df_montadora = oracle.sqlToDataFrame(f"select cnpj, razao_social, nome_fantasia from montadoras where cnpj = {cnpj}")
-            # Revome a montadora da tabela
-            oracle.write(f"delete from montadoras where cnpj = {cnpj}")            
-            # Cria um novo objeto montadora para informar que foi removido
-            montadora_excluido = Montadora(df_montadora.cnpj.values[0], df_montadora.razao_social.values[0], df_montadora.nome_fantasia.values[0])
-            # Exibe os atributos da montadora excluído
-            print("montadora Removida com Sucesso!")
-            print(montadora_excluido.to_string())
+            if not self.verifica_existencia_montadora_em_alugueis(oracle, cnpj):
+                print("A montadora possui alugueis pendentes. Não é possível excluir!")
+            else:
+                # Revome a montadora da tabela
+                oracle.write(f"delete from montadoras where cnpj = {cnpj}")            
+                # Cria um novo objeto montadora para informar que foi removido
+                montadora_excluido = Montadora(df_montadora.cnpj.values[0], df_montadora.razao_social.values[0], df_montadora.nome_fantasia.values[0])
+                # Exibe os atributos da montadora excluído
+                print("montadora Removida com Sucesso!")
+                print(montadora_excluido.to_string())
         else:
             print(f"O CNPJ {cnpj} não existe.")
 
     def verifica_existencia_montadora(self, oracle:OracleQueries, cnpj:str=None) -> bool:
         # Recupera os dados do novo montadora criado transformando em um DataFrame
         df_montadora = oracle.sqlToDataFrame(f"select cnpj, razao_social, nome_fantasia from montadoras where cnpj = {cnpj}")
+        return df_montadora.empty
+    def verifica_existencia_montadora_em_alugueis(self, oracle:OracleQueries, cnpj:str=None) -> bool:
+        # Recupera os dados do novo montadora criado transformando em um DataFrame
+        df_montadora = oracle.sqlToDataFrame(f"select cnpj from alugueis where cnpj = {cnpj}")
         return df_montadora.empty
