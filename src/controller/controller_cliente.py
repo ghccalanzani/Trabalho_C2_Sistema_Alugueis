@@ -70,17 +70,27 @@ class Controller_Cliente:
         if not self.verifica_existencia_cliente(oracle, cpf):            
             # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_cliente = oracle.sqlToDataFrame(f"select cpf, nome from clientes where cpf = {cpf}")
-            # Revome o cliente da tabela
-            oracle.write(f"delete from clientes where cpf = {cpf}")            
-            # Cria um novo objeto Cliente para informar que foi removido
-            cliente_excluido = Cliente(df_cliente.cpf.values[0], df_cliente.nome.values[0])
-            # Exibe os atributos do cliente excluído
-            print("Cliente Removido com Sucesso!")
-            print(cliente_excluido.to_string())
+            # Verifica se existem alugueis em nome do cliente
+            if not self.verifica_existencia_cliente_em_alugueis(oracle, cpf):
+                print("O cliente possui aluguel. Não é possível excluir!")
+            else:
+                # Revome o cliente da tabela
+                oracle.write(f"delete from clientes where cpf = {cpf}")            
+                # Cria um novo objeto Cliente para informar que foi removido
+                cliente_excluido = Cliente(df_cliente.cpf.values[0], df_cliente.nome.values[0])
+                # Exibe os atributos do cliente excluído
+                print("Cliente Removido com Sucesso!")
+                print(cliente_excluido.to_string())
+                
         else:
             print(f"O CPF {cpf} não existe.")
 
     def verifica_existencia_cliente(self, oracle:OracleQueries, cpf:str=None) -> bool:
         # Recupera os dados do novo cliente criado transformando em um DataFrame
         df_cliente = oracle.sqlToDataFrame(f"select cpf, nome from clientes where cpf = {cpf}")
+        return df_cliente.empty
+
+    def verifica_existencia_cliente_em_alugueis(self, oracle:OracleQueries, cpf:str=None) -> bool:
+        # Recupera os dados do novo cliente criado transformando em um DataFrame
+        df_cliente = oracle.sqlToDataFrame(f"select cpf from alugueis where cpf = {cpf}")
         return df_cliente.empty
