@@ -56,7 +56,7 @@ class SplashScreen:
     def get_updated_screen(self):
         return f"""
         ########################################################
-        #                   SISTEMA DE VENDAS                     
+        #                   SISTEMA DE ALUGUEIS                     
         #                                                         
         #  TOTAL DE REGISTROS:                                    
         #      1 - VEICULOS:          {str(self.get_total_veiculos()).rjust(5)}
