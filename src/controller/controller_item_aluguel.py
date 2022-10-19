@@ -189,11 +189,11 @@ class Controller_Item_Aluguel:
         else:
             oracle.connect()
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_aluguel = oracle.sqlToDataFrame(f"select codigo_aluguel, data_aluguel_incial, data_aluguel_final, cpf, cnpj from alugueis where codigo_aluguel = {codigo_aluguel}")
+            df_aluguel = oracle.sqlToDataFrame(f"select codigo_aluguel, data_aluguel_inicial, data_aluguel_final, cpf, cnpj from alugueis where codigo_aluguel = {codigo_aluguel}")
             cliente = self.ctrl_aluguel.valida_cliente(oracle, df_aluguel.cpf.values[0])
             montadora = self.ctrl_aluguel.valida_montadora(oracle, df_aluguel.cnpj.values[0])
             # Cria um novo objeto cliente
-            aluguel = Aluguel(df_aluguel.codigo_aluguel.values[0], df_aluguel.data_aluguel_incial.values[0], df_aluguel.data_aluguel_final.values[0], cliente, montadora)
+            aluguel = Aluguel(df_aluguel.codigo_aluguel.values[0], df_aluguel.data_aluguel_inicial.values[0], df_aluguel.data_aluguel_final.values[0], cliente, montadora)
             return aluguel
 
     def valida_veiculo(self, oracle:OracleQueries, codigo_veiculo:int=None) -> Veiculo:
