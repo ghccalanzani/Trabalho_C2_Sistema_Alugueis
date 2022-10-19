@@ -82,17 +82,24 @@ class Controller_Veiculo:
         if not self.verifica_existencia_veiculo(oracle, codigo_veiculo):            
             # Recupera os dados do novo veiculo criado transformando em um DataFrame
             df_veiculo = oracle.sqlToDataFrame(f"select codigo_veiculo, modelo_veiculo, cor_veiculo, tipo_combustivel from veiculos where codigo_veiculo = {codigo_veiculo}")
-            # Remove o veiculo da tabela
-            oracle.write(f"delete from veiculos where codigo_veiculo = {codigo_veiculo}")            
-            # Cria um novo objeto Veiculo para informar que foi removido
-            veiculo_excluido = Veiculo(df_veiculo.codigo_veiculo.values[0], df_veiculo.modelo_veiculo.values[0], df_veiculo.cor_veiculo.values[0], df_veiculo.tipo_combustivel.values[0])
-            # Exibe os atributos do veiculo excluído
-            print("Veiculo Removido com sucesso!")
-            print(veiculo_excluido.to_string())
+            if not self.verifica_existencia_veiculo_em_alugueis(oracle, codigo_veiculo): 
+                print("O veículo faz parte de um aluguel. Não é possível excluir!")
+            else:
+                # Remove o veiculo da tabela
+                oracle.write(f"delete from veiculos where codigo_veiculo = {codigo_veiculo}")            
+                # Cria um novo objeto Veiculo para informar que foi removido
+                veiculo_excluido = Veiculo(df_veiculo.codigo_veiculo.values[0], df_veiculo.modelo_veiculo.values[0], df_veiculo.cor_veiculo.values[0], df_veiculo.tipo_combustivel.values[0])
+                # Exibe os atributos do veiculo excluído
+                print("Veiculo Removido com sucesso!")
+                print(veiculo_excluido.to_string())
         else:
             print(f"O código {codigo_veiculo} não existe.")
 
     def verifica_existencia_veiculo(self, oracle:OracleQueries, codigo:int=None) -> bool:
         # Recupera os dados do novo veiculo criado transformando em um DataFrame
         df_veiculo = oracle.sqlToDataFrame(f"select codigo_veiculo, modelo_veiculo, cor_veiculo, tipo_combustivel from veiculos where codigo_veiculo = {codigo}")
+        return df_veiculo.empty
+    def verifica_existencia_veiculo_em_alugueis(self, oracle:OracleQueries, codigo:int=None) -> bool:
+        # Recupera os dados do novo veiculo criado transformando em um DataFrame
+        df_veiculo = oracle.sqlToDataFrame(f"select codigo_veiculo from itens_aluguel where codigo_veiculo = {codigo}")
         return df_veiculo.empty
