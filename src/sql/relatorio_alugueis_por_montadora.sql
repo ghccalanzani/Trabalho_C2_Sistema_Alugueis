@@ -7,6 +7,7 @@ with sumariza_alugueis as (
 
 select nvl(m.nome_fantasia, m.razao_social) as empresa
      , sa.qtd_alugueis
+     , sum(i.valor_aluguel_veiculo) as receita_diaria
      , sum(i.quantidade * i.valor_aluguel_veiculo) as receita_possivel_diaria
   from alugueis a
   inner join sumariza_alugueis sa
