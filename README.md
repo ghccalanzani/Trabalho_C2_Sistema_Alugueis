@@ -3,7 +3,7 @@
  
 Vídeo demonstrativo das funções do projeto:
 
-Link: https://youtu.be/ac8SAk9KUsk
+Link: https://youtu.be/gzcdEkR9oc4
 
 
 O sistema exige que as tabelas existam, então basta executar o script Python a seguir para criação das tabelas e preenchimento de dados de exemplos:
